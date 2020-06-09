@@ -8,7 +8,8 @@ hide_sidebar: false
 comments: false
 ---
 
-**Content Type: Hindi or any Indian language Document or Presentation**
+## Content Type
+**Hindi or any Indian language Document or Presentation**
 
 To upload a Hindi or any Indian language type of document, you need to execute the following steps to make the document unchanged after the upload.
 

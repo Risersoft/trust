@@ -34,7 +34,7 @@ Once the content is created, save the form and the content will be **saved** for
 
 ![](/images/InstructorCourseContentSave.png)
 
-## Content Type
+## Hindi/Indian Languages
 
 **Hindi or any Indian language Document or Presentation**
 
