@@ -1,1 +1,3 @@
-Apps framework Documentation Repo
+Ed Nirvana Documentation Repo
+
+Hosted on docs.ednirvana.com
