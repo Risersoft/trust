@@ -2,16 +2,16 @@
 
 entries:
 - title: Sidebar
-  levels: one
+  levels: two
   folders:
 
   - title: Products
-    output: single
+    output: web,pdf
     folderitems:
     - title: EdNirvana Web
       url: /ed-web/introduction.html
-      output: single
+      output: web
     - title: Learner Mobile
       url: /learner-mobile/introduction.html
-      output: single
+      output: web
     
