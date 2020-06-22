@@ -1,3 +1,3 @@
 Ed Nirvana Documentation Repo
 
-Hosted on docs.ednirvana.com
+Hosted on http://docs.ednirvana.com
