@@ -34,6 +34,23 @@ Once the content is created, save the form and the content will be **saved** for
 
 ![](/images/InstructorCourseContentSave.png)
 
+## Tips for Video Upload
+
+A video created by your smart phone is too heavier to upload and way too heavy for students to download. Please compress the 
+video before uploading in order to speed up the process of uploading and downloading, as well as to save the internet.
+
+**Please find below the link for video compressor tool for Android Smart Phones.**
+
+[Google Play Store ](https://play.google.com/store/apps/details?id=com.pandavideocompressor)
+
+![](/images/videocompressor.png)
+
+**Also if you want to compress your videos on your laptop, please double click on the application below to install:**
+
+[Softsea](http://www.softsea.com/download/Free-Video-Compressor.html)
+
+
+
 ## Hindi/Indian Languages
 
 **Hindi or any Indian language Document or Presentation**
