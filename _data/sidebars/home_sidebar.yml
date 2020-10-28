@@ -5,13 +5,11 @@ entries:
   levels: two
   folders:
 
-  - title: Products
+  - title: Modules
     output: web,pdf
     folderitems:
     - title: EdNirvana Web
-      url: /ed-web/introduction.html
+      url: /trust-nirvana-web/introduction.html
       output: web
-    - title: Learner Mobile
-      url: /learner-mobile/introduction.html
-      output: web
+
     

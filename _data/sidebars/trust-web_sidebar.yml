@@ -1,0 +1,90 @@
+# This is your sidebar TOC. The sidebar code loops through sections here and provides the appropriate formatting.
+
+
+entries:
+- title: Sidebar
+  product: TrustNirvana
+  
+  folders:
+
+  - title:
+    output: pdf
+    type: frontmatter
+    folderitems:
+    - title:
+      url: /titlepage.html
+      output: pdf
+      type: frontmatter
+    - title:
+      url: /tocpage.html
+      output: pdf
+      type: frontmatter
+
+  - title: Introduction
+    output: single
+    url: /trust-nirvana-web/introduction.html
+    folderitems:
+    -
+
+  - title: Master Menu
+    url: /trust-nirvana-web/master-menu.html
+    output: web, pdf
+
+    folderitems:
+    - title: Trust
+      url: /trust-nirvana-web/trust.html
+      output: web, pdf
+
+    - title: Person
+      url: /trust-nirvana-web/person.html
+      output: web, pdf
+      
+    - title: Party
+      url: /trust-nirvana-web/party.html
+      output: web, pdf
+      
+      
+  - title: Organization Menu
+    url: /trust-nirvana-web/organization-menu.html
+    output: web, pdf
+
+    folderitems:
+    
+    - title: Office Bearers
+      url: /trust-nirvana-web/office-bearers.html
+      output: web, pdf
+
+    - title: Committee
+      url: /trust-nirvana-web/committee.html
+      output: web, pdf
+                 
+    - title: Events
+      url: /trust-nirvana-web/event.html
+      output: web, pdf
+      
+     
+    
+  - title: Property Menu
+    url: /trust-nirvana-web/property-menu.html
+    output: web, pdf
+
+    folderitems:
+    
+    - title: Shop
+      url: /trust-nirvana-web/shop.html
+      output: web, pdf
+      
+    - title: Rent
+      url: /trust-nirvana-web/rent.html
+      output: web, pdf
+      
+    - title: Land
+      url: /trust-nirvana-web/land-details.html
+      output: web, pdf
+      
+    - title: Legal
+      url: /trust-nirvana-web/legal.html
+      output: web, pdf
+    
+      
+    
