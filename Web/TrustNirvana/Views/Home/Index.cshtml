@@ -1,0 +1,55 @@
+﻿@using risersoft.shared.cloud.common
+@{
+    ViewData["Title"] = "Home Page";
+    string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/').ToString();
+    string banner = risersoft.shared.GlobalCore.GetConfigSetting("banner").ToString();
+    if (string.IsNullOrWhiteSpace(banner)) { banner = "/Content/images/edunirvana-front.jpg"; }
+    else { banner = baseUrl + banner; }
+}
+
+<div class="row" style="margin-bottom:41px">
+    <div class="col-md-8">
+        <img src="@banner" style="width:650px;" class="img-responsive banner-img">
+    </div>
+    <div class="col-md-3 gst-banner-text">
+        <h1 class="gst-banner-text-title">TrustNirvana</h1>
+        <p class="lead gst-banner-text-para">Manage your non-profit’s organization and operations.</p>
+        <p><a href="/app" class="btn btn-primary btn-lg">Start Now &raquo;</a></p>
+
+        <div class="col-md-12" style="margin-top:85px;">
+            <a href="https://play.google.com/store/apps/details?id=com.risersoft.TrustNirvana" target="_blank"><img class="play" src="~/Content/images/playstore-button.png" style="width:100px;"></a>&nbsp;
+            <a href="#appstore"><img class="app" src="~/Content/images/appstore-button.png" style="width:100px;"></a>
+        </div>
+    </div>
+</div>
+
+<div class="row clsimgb">
+    <div class="col-md-3 footer-nav footer-text">
+        <div class="clsfoot">
+            <h2>Organization</h2>
+            <p>
+                Manage various trustees, committees and office bearers.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-3 footer-nav footer-text">
+        <div class="clsfoot">
+            <h2>Events</h2>
+            <p>
+                Manage and Record important events including pictures and videos.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-3 footer-nav footer-text">
+        <div class="clsfoot">
+            <h2>Property</h2>
+            <p>Manage Properties - land and shops and their tenants and rents.</p>
+        </div>
+    </div>
+    <div class="col-md-3 footer-text">
+        <div class="clsfoot">
+            <h2>Legal</h2>
+            <p>Manage court cases and hearing proceedings and schedule.</p>
+        </div>
+    </div>
+</div>

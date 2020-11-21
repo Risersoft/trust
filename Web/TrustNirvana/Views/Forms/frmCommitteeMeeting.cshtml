@@ -1,0 +1,319 @@
+﻿@using risersoft.shared.web.Extensions;
+@using Newtonsoft.Json;
+@using risersoft.app.mxform.trust;
+@using Syncfusion.EJ2;
+
+@model frmCommitteeMeetingModel
+@{
+    ViewData["Title"] = "";
+    Layout = "~/Views/Shared/_FrameworkLayout.vbhtml";
+    var modelJson = JsonConvert.SerializeObject(Model, Formatting.Indented,
+                            new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml, NullValueHandling = NullValueHandling.Ignore });
+}
+
+
+<script type="text/javascript">
+    var defaultRTE; var defaultRTEFN;
+    function created() {
+        defaultRTE = this;
+        this.insertImageSettings = {
+            saveFormat: "Base64"
+        };
+    };
+
+    function createdfn() {
+        defaultRTEFN = this;
+        this.insertImageSettings = {
+            saveFormat: "Base64"
+        };
+    };
+</script>
+<link href="~/Content/custom-calander.css" rel="stylesheet" />
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/jQueryUI-datetimepicker.js"></script>
+<style type="text/css">
+    .e-rte-tb-expand {
+        z-index: 9;
+    }
+</style>
+
+<div Class="container cbackground">
+    <form action="" method="post" name="userform" id="userform" ng-controller="FormController">
+        <input type="hidden" id="model_json" value='@Html.Raw(modelJson)' />
+        @Html.AntiForgeryToken()
+
+        <!-- Start Page Heading Section -->
+        <div class="row">
+            <div class="col-md-10">
+                <label class="control-label"></label>
+                <h5 style="color:#1c66a7">{{title}} Committee Meeting</h5>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <hr />
+        <!-- End Page Heading Section -->
+        <!-- Start Page Content -->
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Dated<span class="red">*</span></label>
+                <div class="input-group">
+                    <input type="text" name="dated" ng-model="committeeInfo.Dated" class="form-control admnDate" style="max-width:100%" aria-describedby="basic-addon1" required ng-class="{true: 'error'}[submitted() && userform.dated.$invalid]" />
+                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 225px; z-index:9">
+                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Committee<span class="red">*</span></label>
+                <select name="committeeid" ng-model="committeeInfo.CommitteeIDSelected" disabled class="form-control" style="min-width: 100%;" ng-options="com.Name for com in committee track by com.CommitteeID" required ng-class="{true: 'error'}[submitted() && userform.committeeid.$invalid]"></select>
+            </div>
+            <div class="form-group col-md-5">
+                <label for="inputEmail4">Remainder</label>
+                <input type="text" ng-model="committeeInfo.Reminder" class="form-control" style="max-width:100%" aria-describedby="basic-addon1" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="persons-tab" data-toggle="tab" href="#persons" role="tab" aria-controls="persons" aria-selected="true">Persons</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="persons" role="tabpanel" aria-labelledby="persons-tab">
+                        <div class="form-row">
+                            <div class="form-group col-md-11">
+                                <table id="tblFamilyMember" class="table table-sm" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Member Name</th>
+                                            <th>Designation</th>
+                                            <!--<th>Start Date</th>
+                                            <th>End Date</th>-->
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="memdet in Member track by $index" ng-show="Member.length > 0">
+                                            <td>{{$index + 1}}.</td>
+                                            <td>{{memdet.FullName}}</td>
+                                            <td>{{memdet.Desig || memdet.desig}}</td>
+                                            <!--<td>
+                                                <div class="input-group">
+                                                    <input type="text" name="dated" ng-model="memdet.Sdate" class="form-control admnDate" aria-describedby="basic-addon1" />
+                                                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 240px; z-index:9">
+                                                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" name="dated" ng-model="memdet.Edate" class="form-control admnDate" aria-describedby="basic-addon1" />
+                                                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 240px; z-index:9">
+                                                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                                                    </label>
+                                                </div>
+                                            </td>-->
+                                            <td>
+                                                <a href="javascript:void(0)"><i class="fa fa-trash" ng-click="deleteMember($index)"></i></a>
+                                                <a href="javascript:void(0)" ng-show="!$first" ng-click="moveUp($index, Member)"><i class="fa fa-arrow-up"></i></a>
+                                                <a href="javascript:void(0)" ng-show="!$last" ng-click="moveDown($index, Member)"><i class="fa fa-arrow-down"></i></a>
+                                            </td>
+                                        </tr>
+                                        <tr ng-show="!Member.length">
+                                            <td colspan="4" style="text-align:center;font-size: 20px;">No Records Found...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <div style="float:right; margin-bottom:5px;">
+                                    <button type="button" id="btnAddNew" Class="btn btn-default btnf" ng-click="commonDialog('','dialogUsers', 'Select Person','persons')"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Page Content-->
+
+        <div class="form-row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs" id="myAgendaTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="agenda-tab" data-toggle="tab" href="#agenda" role="tab" aria-controls="agenda" aria-selected="false">Agenda</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myAgendaTabContent">
+                    <div class="tab-pane fade show active" id="agenda" role="tabpanel" aria-labelledby="agenda-tab">
+                        <div class="form-group col-md-12">
+                            <div class="control-wrapper" style="margin-left: -15px;">
+                                <div class="control-section">
+                                    @Html.EJS().RichTextEditor("defaultRTE").Value("").Created("created").Render()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="minutes-tab" data-toggle="tab" href="#minutes" role="tab" aria-controls="minutes" aria-selected="false">Minutes</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="minutes" role="tabpanel" aria-labelledby="minutes-tab">
+                        <div class="form-group col-md-12">
+                            <div class="control-section">
+                                <div class="control-wrapper" style="margin-left: -15px;">
+                                    <div class="control-section">
+                                        @Html.EJS().RichTextEditor("defaultRTEFN").Value("").Created("createdfn").Render()
+                                    </div>
+                                </div>
+                                @Html.EJS().ScriptManager()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        @Html.Partial("_SavePanel")
+
+        <div id="dialogUsers"></div>
+    </form>
+</div>
+
+@section botscripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.admnDate').datetimepicker({
+                format: 'Y/m/d',
+                timepicker: false,
+            }).attr('readonly', 'readonly');
+        });
+
+        rsApp.controller('FormController', function ($scope, $http) {
+            $scope.model = JSON.parse($("#model_json").val());
+            $scope.status = 'loaded';
+
+            var loadmodel = function (result) {
+                $scope.model = result;
+                //Set Page Heading
+                $scope.title = ($scope.model.frmMode == 2 ? "Add" : $scope.model.frmMode == 1 ? "Edit" : "");
+                //Show Hide Delete Buttons
+                $scope.visdel = ($scope.model.frmMode == 2 ? false : true);
+                 //set Event Model in scopee
+                $scope.committeeInfo = $scope.model.dsForm.DT[0];
+                //Date Format
+                $scope.committeeInfo.Dated = $scope.committeeInfo.Dated == undefined ? "" : new moment($scope.committeeInfo.Dated).format("YYYY-MM-D");
+                //Bind Company Dropdown
+                $scope.committee = $scope.model.dsCombo.Committee;
+                $scope.committeeInfo.CommitteeIDSelected = $.grep($scope.committee, function (item, index) { return item.CommitteeID == $scope.model.dsForm.DT[0].CommitteeID })[0];
+                //Set PERSONS Data
+                $scope.Member = $scope.model.GridViews.Persons.MainGrid.myDS.dt;
+                //Bind HTML Message
+                defaultRTE.value = $scope.committeeInfo.AgendaHTML == undefined ? "" : $scope.committeeInfo.AgendaHTML;
+                //Bind HTML Message
+                defaultRTEFN.value = $scope.committeeInfo.MinutesHTML == undefined ? "" : $scope.committeeInfo.MinutesHTML;
+            }
+
+            loadmodel($scope.model);
+
+            //OPEN DIALOG COMMON CODE
+            $scope.commonDialog = function (val, dialogName, dialogTitle, keyValue) {
+                var payload;
+                $scope.IsInitializing = true;
+                $scope.result = '';
+
+                if (keyValue == "persons") {
+                    if ($scope.Member.length > 0) {
+                        arr_usr = [];
+                        for (var i = 0; i < $scope.Member.length; i++) {
+                            if ($scope.Member[i].Personid != undefined) {
+                                arr_usr.push($scope.Member[i].Personid);
+                            }
+                            else {
+                                arr_usr.push($scope.Member[i].Personid);
+                            }
+                        }
+                        var strData = arr_usr.join(',');
+                        payload = { PersonIDCSV: strData, CommitteeID: $scope.committeeInfo.CommitteeID };
+                    } else {
+                        payload = { PersonIDCSV: '0', CommitteeID: $scope.committeeInfo.CommitteeID }; // not required here
+                    }
+                }
+
+                var url = '/frmCommitteeMeeting/ParamsModel' + location.search;
+                payload = JSON.stringify(payload);
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                var payloaddata = { key: keyValue, Params: payload, __RequestVerificationToken: token };
+                igGridDataPostData(url, payloaddata, dialogName, dialogTitle, keyValue);
+            };
+
+            //Bind Grid Data
+            $scope.gridfxn = function (rowData, allData, keyValue) {
+                $(document).ready(function () {
+                    $('.admnDate').datetimepicker({
+                        format: 'Y/m/d',
+                        timepicker: false,
+                    }).attr('readonly', 'readonly');
+
+                    $('.endDate').datetimepicker({
+                        format: 'Y/m/d',
+                        timepicker: false,
+                        minDate: 0
+                    }).attr('readonly', 'readonly');
+                });
+
+                if (keyValue == "persons") {
+                    for (var i = 0; i < rowData.length; i++) {
+                        $scope.Member.push(allData[rowData[i].index]);
+                    }
+                }
+            }
+
+            $scope.calculatemodel = function () {
+                //Agenda HTML
+                $scope.committeeInfo.AgendaHTML = base64EncodeUnicode(defaultRTE.getHtml());
+                $scope.committeeInfo.AgendaText = base64EncodeUnicode(defaultRTE.getText());
+
+                //Minutes HTML
+                $scope.committeeInfo.MinutesHTML = base64EncodeUnicode(defaultRTEFN.getHtml());
+                $scope.committeeInfo.MinutesText = base64EncodeUnicode(defaultRTEFN.getText());
+
+                //Save Member
+                var arr_mbr = [];
+                if (Array.isArray($scope.Member) && $scope.Member.length > 0) {
+                    for (var i = 0; i <= $scope.Member.length - 1; i++) {
+                        arr_mbr.push($scope.Member[i].Personid);
+                    }
+                    $scope.model.dsForm.DT[0].PersonIDCSV = arr_mbr.join();
+                }
+            }
+
+            $scope.cleanupmodel = function (datamodel) { }
+
+            $scope.deleteMember = function (index) {
+                $scope.Member.splice(index, 1);
+            }
+
+            //Delete Records
+            $scope.GenerateDelPayload = function () {
+                //Pass the EntityKey in lowercase
+                var payload = { EntityKey: 'committeemeeting', ID: $scope.model.dsForm.DT[0].CommitteeMeetingID, AcceptWarning: false };
+                return payload;
+            };
+
+            @Html.RenderFile("~/scripts/rsforms.js");
+        });
+    </script>
+}
+

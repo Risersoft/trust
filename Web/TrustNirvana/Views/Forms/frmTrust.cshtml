@@ -1,0 +1,361 @@
+﻿@using risersoft.shared.web.Extensions;
+@using Newtonsoft.Json;
+@using risersoft.app.mxform.trust;
+@using Syncfusion.EJ2;
+
+@model frmTrustModel
+@{
+    ViewData["Title"] = "";
+    Layout = "~/Views/Shared/_FrameworkLayout.vbhtml";
+    var modelJson = JsonConvert.SerializeObject(Model, Formatting.Indented,
+                            new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml, NullValueHandling = NullValueHandling.Ignore });
+}
+
+<script type="text/javascript">
+    var defaultRTE; var defaultRTEFN;
+    function createdfn() {
+        defaultRTEFN = this;
+        this.insertImageSettings = {
+            saveFormat: "Base64"
+        };
+    };
+</script>
+<link href="~/Content/custom-calander.css" rel="stylesheet" />
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/jQueryUI-datetimepicker.js"></script>
+
+<style type="text/css">
+    .e-rte-tb-expand {
+        z-index: 9;
+    }
+</style>
+
+<div Class="container cbackground">
+    <form action="" method="post" name="userform" id="userform" ng-controller="FormController">
+        <input type="hidden" id="model_json" value='@Html.Raw(modelJson)' />
+        @Html.AntiForgeryToken()
+
+        <!-- Start Page Heading Section -->
+        <div class="row">
+            <div class="col-md-10">
+                <label class="control-label"></label>
+                <h5 style="color:#1c66a7">{{title}} Trust</h5>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <!-- End Page Heading Section -->
+        <hr />
+
+        <!-- Start Page Content -->
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Name of the Trust<span class="red">*</span></label>
+                <input type="text" name="collegeName" ng-model="college.CompName" class="form-control" style="min-width: 100%;" required ng-class="{true: 'error'}[submitted() && userform.collegeName.$invalid]" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Trust Code<span class="red">*</span></label>
+                <input type="text" name="collegeCode" ng-model="college.CompCode" class="form-control" style="min-width: 100%;" required ng-class="{true: 'error'}[submitted() && userform.collegeCode.$invalid]" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Principal Name</label>
+                <select name="companyid" ng-model="college.PrincipalPersonIDSelected" class="form-control" style="min-width: 100%;" ng-options="ppl.FullName for ppl in principal track by ppl.PersonID"></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Principal Message</label>
+                <div class="control-section">
+                    <div class="control-wrapper">
+                        <div class="control-section">
+                            @Html.EJS().RichTextEditor("defaultRTEFN").Value("").Created("createdfn").Render()
+                        </div>
+                    </div>
+                </div>
+                @Html.EJS().ScriptManager()
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-12"><p class="text-light bg-primary" style="color:#027fbd"><span style="padding:10px;">Details</span></p></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Address</label>
+                <input type="text" name="address" ng-model="college.Address" style="max-width:100%" class="form-control" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">City</label>
+                <input type="text" class="form-control" name="city" ng-model="college.City" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputPassword4">Web</label>
+                <input type="text" class="form-control weburl" name="web" ng-model="college.Web" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputPassword4">Pincode</label>
+                <input type="text" class="form-control numeric" name="pincode" ng-model="college.Pincode" style="min-width: 100%;" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="control-label">Phone No.</label>
+                <label>
+                    <input type="text" ng-model="college.PhCountry" class="input-group-addon numeric" maxlength="2" style="width:20%;" />
+                    <input type="text" ng-model="college.PhArea" class="input-group-addon numeric" maxlength="3" style="width:20%" />
+                    <input type="text" ng-model="college.Phnum" class="input-group-addon numeric" maxlength="7" style="width:56%" />
+                </label>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="control-label">Fax No.</label>
+                <label>
+                    <input type="text" ng-model="college.FaxCountry" class="input-group-addon numeric" maxlength="2" style="width:20%;" />
+                    <input type="text" ng-model="college.FaxArea" class="input-group-addon numeric" maxlength="3" style="width:20%" />
+                    <input type="text" ng-model="college.Faxnum" class="input-group-addon numeric" maxlength="7" style="width:56%" />
+                </label>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="control-label labeltext">Email</label>
+                <input type="text" class="form-control clsemail" name="email" ng-model="college.Email" style="min-width: 100%;" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div Class="form-group col-md-4">
+                <Label Class="control-label labeltext">Country <span class="red">*</span></Label>
+                <select name="country" ng-model="college.CountrySelected" ng-options="itemcoun.country for itemcoun in dsCombo.CO track by itemcoun.country" ng-change="changestate(college.CountrySelected)" style="max-width:100%" Class="form-control" required ng-class="{true: 'error'}[submitted() && userform.country.$invalid]"></select>
+            </div>
+            <div Class="form-group col-md-4">
+                <Label Class="control-label labeltext">State <span class="red">*</span></Label>
+                <select name="state" ng-model="college.StateSelected" ng-options="itemsu.SubDivisionName for itemsu in State track by itemsu.SubDivisionName" style="max-width:100%" Class="form-control" required ng-class="{true: 'error'}[submitted() && userform.state.$invalid]"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="control-label labeltext">HR Start Date<span class="red">*</span></label>
+                <div class="input-group">
+                    <input type="text" id="hrstartdate" ng-model="college.HRStartDate" name="hrstartdate" class="form-control admnDate" style="max-width:100%" aria-describedby="basic-addon1" required ng-class="{true: 'error'}[submitted() && userform.hrstartdate.$invalid]" />
+                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 310px; z-index:9">
+                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                    <label class="input-group-addon btn" for="close" style="position: absolute;margin-left: 285px;z-index:9;" id="dateclean">
+                        <span class="fa fa-close" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-12"><p class="text-light bg-primary" style="color:#f8f9fa"><span style="padding:10px;">Trust Prospectus</span></p></div>
+        </div>
+        @Html.Partial("_Attachment")
+        <div class="form-row">
+            <div class="col-md-12"><p class="text-light bg-primary" style="color:#f8f9fa"><span style="padding:10px;">Academic Calender</span></p></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <div id="spnAMsg" ng-show="isAShowMsg" style="margin-bottom:15px; margin-top:15px;"></div>
+                <table id="tbl">
+                    <tr>
+                        <td style="width:700px"><input type="file" id="filename" name="filename" class="form-control" autocomplete="off" style="max-width: 100%;"></td>
+                        <td><button type="button" id="btnAcademicCalenderUpload" class="btn btn-default btnf" ng-click="Upload('academicCalender')">Upload</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="form-row" ng-show="AcademicCalender.length > 0">
+            <div class="form-group col-md-12">
+                <table id="tbl" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>File Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="ac in AcademicCalender track by $index">
+                            <td>{{$index+1}}</td>
+                            <td>{{ac.bloborgname}}</td>
+                            <td>
+                                <a href="javascript:void(0)" title="Delete Record"><i class="fa fa-trash fa-2x" ng-click="deleteACRow($index)"></i></a>
+                                <a href="javascript:void(0)" title="Download Document" ng-click="downloadAFile(ac.blobname)"><i class="fa fa-download fa-2x"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <!-- End Page Content-->
+        <hr />
+        @Html.Partial("_SavePanel")
+
+        <!-- Modal -->
+        <div class="modal fade" id="errorModel" role="dialog" style="z-index:99999">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+                        <h4 class="modal-title">Error</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p style="font-size: 16px;">Please check your uploaded file extension. </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnClose" class="btn btn-default" ng-click="closeErrorDialog()">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+@section botscripts{
+    <script type="text/javascript">
+        $(function () {
+            $(".admnDate").datetimepicker({
+                format: 'Y/m/d',
+                timepicker: false,
+            }).attr('readonly', 'readonly');
+
+            $('#attach_filename').attr("accept", ".doc, .docx, .pdf");
+
+            $('#dateclean').on('click', function () {
+                $('#hrstartdate').val('');
+            });
+        });
+
+        rsApp.controller('FormController', function ($scope, $http, usSpinnerService) {
+            $scope.model = JSON.parse($("#model_json").val());
+            $scope.status = 'loaded';
+
+            var loadmodel = function (result) {
+                $scope.model = result;
+                //Set Page Heading
+                $scope.title = ($scope.model.frmMode == 2 ? "Add" : $scope.model.frmMode == 1 ? "Edit" : "");
+                //Show Hide Delete Buttons
+                $scope.visdel = ($scope.model.frmMode == 2 ? false : true);
+                //set College Model in scope
+                $scope.college = $scope.model.dsForm.DT[0];
+                //Drop Down Values
+                $scope.dsCombo = $scope.model.dsCombo;
+                //Bind Country
+                $scope.country = $scope.model.dsCombo.CO;
+                //Bind State
+                $scope.state = $scope.model.dsCombo.SU;
+                //Bind HTML Message
+                defaultRTEFN.value = $scope.college.PrincipalMessageHTML == undefined ? "" : $scope.college.PrincipalMessageHTML;
+                //Date Format
+                $scope.college.HRStartDate = $scope.college.HRStartDate == undefined ? "" : new moment($scope.college.HRStartDate).format("YYYY-MM-D");
+                //BIND COUNTRY STATE IN EDIT MODE
+                $scope.college.CountrySelected = $.grep($scope.country, function (item, index) { return item.countryname == $scope.model.dsForm.DT[0].Country })[0];
+                $scope.changestate = function (id) {
+                    $scope.State = [];
+                    if (id) {
+                        $.each($scope.model.dsCombo.SU, function (item, index) {
+                            if (index.countrycode === id.countrycode) {
+                                $scope.State.push(index);
+                            }
+                        });
+                    }
+                };
+                $scope.changestate($scope.college.CountrySelected);
+                $scope.college.StateSelected = $.grep($scope.state, function (item, index) { return item.SubDivisionName == $scope.model.dsForm.DT[0].State })[0];
+                //Bind Principal Name
+                $scope.principal = $scope.model.dsCombo.PrincipalPerson;
+                $scope.college.PrincipalPersonIDSelected = $.grep($scope.principal, function (item, index) { return item.PersonID == $scope.model.dsForm.DT[0].PrincipalPersonID })[0];
+
+                //Assign Upload Files
+                $scope.UploadFiles = $scope.college.CollegePros !== undefined ? JSON.parse($scope.college.CollegePros) : [];
+                $scope.AcademicCalender = $scope.college.AcademicCalender !== undefined ? JSON.parse($scope.college.AcademicCalender) : [];
+            }
+
+            loadmodel($scope.model);
+
+            $scope.calculatemodel = function () {
+                $scope.model.dsForm.DT[0].PrincipalMessageHTML = base64EncodeUnicode(defaultRTEFN.getHtml());
+                $scope.model.dsForm.DT[0].PrincipalMessageText = base64EncodeUnicode(defaultRTEFN.getText());
+
+                $scope.model.dsForm.DT[0].CollegePros = JSON.stringify($scope.UploadFiles);
+                $scope.model.dsForm.DT[0].AcademicCalender = JSON.stringify($scope.AcademicCalender);
+            }
+
+            $scope.cleanupmodel = function (datamodel) { }
+
+            $scope.downloadFile = function (filename) {
+                $scope.download('frmTrust', filename);
+            }
+
+            $scope.Upload = function (type) {
+                var fileExtn = '';
+                var ctrlName = '';
+                var hdnControl = '';
+                var statusType = '';
+
+                $("div.spinnerTarget").addClass("backdrop");
+                $("body").css("overflow", "hidden");
+                usSpinnerService.spin('spinner-1');
+
+                if (type == "academicCalender") {
+                    $scope.isAShowMsg = false;
+
+                    fileExtn = $('#filename').val().split('.').pop().toLowerCase();
+                    // For Progress baar
+                    ctrlName = $('#filename');
+                    filec = $('#filename').val();
+                    hdnControl = 'filename';
+                    statusType = 'academicCalender';
+
+                    if (fileExtn !== "doc" && fileExtn !== "docx" && fileExtn !== "ppt" && fileExtn !== "pptx" && fileExtn !== "pdf" && fileExtn !== "jpeg" && fileExtn !== "jpg" && fileExtn !== "png" && fileExtn !== "mkv" && fileExtn !== "mp4" && fileExtn !== "wav" && fileExtn !== "3gp" && fileExtn !== "wmv" && fileExtn !== "wma" && fileExtn !== "flv") {
+                        $('#errorModel').modal('toggle');
+                        $scope.isbtnAttachmentUpload = "";
+                        return false;
+                    }
+
+                    var url = '/frmTrust/ParamsOutput' + location.search;
+                    var payloaddata = { key: 'sas', Params: JSON.stringify({ filename: filec }), __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() };
+                    // generic fxn
+                    $scope.UploadFile(url, payloaddata, true, ctrlName, hdnControl, statusType);
+                }
+                else {
+                    fileExtn = $('#attach_filename').val().split('.').pop().toLowerCase();
+                    // For Progress baar
+                    ctrlName = $('#attach_filename');
+                    filec = $('#attach_filename').val();
+                    hdnControl = 'attach_filename';
+                    statusType = 'fileStatus';
+
+                    if (fileExtn !== "jpeg" && fileExtn !== "jpg" && fileExtn !== "png" && fileExtn !== "gif" && fileExtn !== "pdf" && fileExtn !== "doc" && fileExtn !== "docx") {
+                        $('#errorModel').modal('toggle');
+                        $scope.isbtnAttachmentUpload = "";
+                        return false;
+                    }
+
+                    var url = '/frmTrust/ParamsOutput' + location.search;
+                    var payloaddata = { key: 'sas', Params: JSON.stringify({ filename: filec }), __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() };
+                    // generic fxn
+                    $scope.UploadFile(url, payloaddata, true, ctrlName, hdnControl, statusType);
+                }
+            }
+
+            $scope.downloadAFile = function (filename) {
+                $scope.download('frmTrust', filename);
+            }
+
+            //Delete Records
+            $scope.GenerateDelPayload = function () {
+                //Pass the EntityKey in lowercase
+                var payload = { EntityKey: 'company', ID: $scope.model.dsForm.DT[0].CompanyID, AcceptWarning: false };
+                return payload;
+            };
+
+            $scope.deleteACRow = function (index) {
+                $scope.AcademicCalender.splice(index, 1);
+            }
+
+            @Html.RenderFile("~/scripts/uploadFiles.js");
+            @Html.RenderFile("~/scripts/rsforms.js");
+        });
+    </script>
+}

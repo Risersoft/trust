@@ -1,0 +1,93 @@
+﻿@using risersoft.shared.web.Extensions;
+@using Newtonsoft.Json;
+@using risersoft.app.mxform.trust;
+
+@model frmPropertyTenantModel
+@{
+    ViewData["Title"] = "";
+    Layout = "~/Views/Shared/_FrameworkLayout.vbhtml";
+    var modelJson = JsonConvert.SerializeObject(Model, Formatting.Indented,
+                            new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml, NullValueHandling = NullValueHandling.Ignore });
+}
+
+<div Class="container cbackground">
+    <form action="" method="post" name="userform" id="userform" ng-controller="FormController">
+        <input type="hidden" id="model_json" value='@Html.Raw(modelJson)' />
+        @Html.AntiForgeryToken()
+
+        <!-- Start Page Heading Section -->
+        <div class="row">
+            <div class="col-md-10">
+                <label class="control-label"></label>
+                <h5 style="color:#1c66a7">{{title}} Property Tenant</h5>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <!-- End Page Heading Section -->
+
+        <hr />
+        <!-- Start Page Content -->
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Property<span class="red">*</span></label>
+                <select class="form-control" name="property" ng-model="propertyInfo.PropertyIDSelected" disabled ng-options="prty.ShopNo for prty in dsCombo.Property track by prty.PropertyID" required ng-class="{true: 'error'}[submitted() && userform.property.$invalid]" style="min-width: 100%;"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Party</label>
+                <select class="form-control" name="party" ng-model="propertyInfo.PartyIDSelected" ng-options="pty.PartyName for pty in dsCombo.Party track by pty.PartyID" style="min-width: 100%;"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Current</label>
+                <select class="form-control" name="current" ng-model="propertyInfo.IsCurrentSelected" ng-options="cc.DisplayText for cc in ValueLists.IsCurrent.ValueListItems track by cc.DataValue" style="min-width: 100%;"></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Remark</label>
+                <input type="text" ng-model="propertyInfo.Remark" class="form-control" style="max-width: 100%;" />
+            </div>
+        </div>
+        <!-- End Page Content-->
+        <hr />
+        @Html.Partial("_SavePanel")
+    </form>
+</div>
+
+@section botscripts{
+    <script type="text/javascript">
+        rsApp.controller('FormController', function ($scope, $http, usSpinnerService) {
+            $scope.model = JSON.parse($("#model_json").val());
+            $scope.status = 'loaded';
+
+            var loadmodel = function (result) {
+                $scope.model = result;
+                //Set Page Heading
+                $scope.title = ($scope.model.frmMode == 2 ? "Add" : $scope.model.frmMode == 1 ? "Edit" : "");
+                //Show Hide Delete Buttons
+                $scope.visdel = ($scope.model.frmMode == 2 ? false : true);
+                //courtInfo
+                $scope.propertyInfo = $scope.model.dsForm.DT[0];
+                //Bind Dropdown
+                $scope.dsCombo = $scope.model.dsCombo;
+                $scope.ValueLists = $scope.model.ValueLists;
+                @Html.RenderLookup("propertyInfo", Model, Model.dsForm.Tables[0])
+            }
+
+            loadmodel($scope.model);
+
+            $scope.calculatemodel = function () { }
+
+            $scope.cleanupmodel = function (datamodel) { }
+
+            //Delete Records
+            $scope.GenerateDelPayload = function () {
+                //Pass the EntityKey in lowercase
+                var payload = { EntityKey: 'propertytenant', ID: $scope.model.dsForm.DT[0].PropertyTenantID, AcceptWarning: false };
+                return payload;
+            };
+
+            @Html.RenderFile("~/scripts/rsforms.js");
+        });
+    </script>
+}
+

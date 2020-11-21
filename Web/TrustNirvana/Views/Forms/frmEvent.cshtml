@@ -1,0 +1,435 @@
+﻿@using risersoft.shared.web.Extensions
+@using Newtonsoft.Json
+@using risersoft.app.mxform.trust
+@using Syncfusion.EJ2
+
+@model frmEventModel
+@{
+    ViewData["Title"] = "";
+    Layout = "~/Views/Shared/_FrameworkLayout.vbhtml";
+    var modelJson = JsonConvert.SerializeObject(Model, Formatting.Indented,
+                            new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml, NullValueHandling = NullValueHandling.Ignore });
+}
+
+<link href="~/Content/custom-calander.css" rel="stylesheet" />
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/jQueryUI-datetimepicker.js"></script>
+
+<script type="text/javascript">
+    var defaultRTE; var defaultRTEFN;
+    function createdfn() {
+        defaultRTEFN = this;
+        this.insertImageSettings = {
+            saveFormat: "Base64"
+        };
+    };
+    function created() {
+        defaultRTE = this;
+        this.insertImageSettings = {
+            saveFormat: "Base64"
+        };
+    };
+</script>
+<style>
+    .e-richtexteditor {
+        z-index: 9;
+    }
+</style>
+
+<div Class="container cbackground">
+    <form action="" method="post" name="userform" id="userform" ng-controller="FormController">
+        <input type="hidden" id="model_json" value='@Html.Raw(modelJson)' />
+        <input type="hidden" id="multifileStatus" />
+
+        @Html.AntiForgeryToken()
+
+        <!-- Start Page Heading Section -->
+        <div class="row">
+            <div class="col-md-10">
+                <label class="control-label"></label>
+                <h5 style="color:#1c66a7">{{title}} Event</h5>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <hr />
+        <!-- End Page Heading Section -->
+        <!-- Start Page Content -->
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Trust</label>
+                <select name="companyid" ng-model="eventInfo.CompanyIDSelected" class="form-control" style="min-width: 100%;" ng-options="comp.CompName for comp in dsCombo.Company track by comp.CompName" disabled="disabled"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Event Name<span class="red">*</span></label>
+                <input type="text" name="eventName" ng-model="eventInfo.EventName" class="form-control" style="min-width: 100%;" required ng-class="{true: 'error'}[submitted() && userform.eventName.$invalid]" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Start Date<span class="red">*</span></label>
+                <div class="input-group">
+                    <input type="text" id="startdate" name="startdate" ng-model="eventInfo.Sdate" class="form-control admnDate" style="max-width:100%" aria-describedby="basic-addon1" required ng-class="{true: 'error'}[submitted() && userform.startdate.$invalid]" />
+                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 310px; z-index:9">
+                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                    <label class="input-group-addon btn" for="close" style="position: absolute;margin-left: 285px;z-index:9;" id="dateclean">
+                        <span class="fa fa-close" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Organised By</label>
+                <input type="text" name="organizedby" ng-model="eventInfo.OrganizedBy" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Participant</label>
+                <input type="text" name="participant" ng-model="eventInfo.Participant" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Speaker </label>
+                <input type="text" name="speaker" ng-model="eventInfo.Speaker" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Place</label>
+                <input type="text" name="targetaudience" ng-model="eventInfo.Place" class="form-control" style="min-width: 100%;" />
+            </div>
+        </div>
+        <div class="form-row">
+            @*<div class="form-group col-md-4">
+                    <label for="inputEmail4">Department</label>
+                    <select name="deptid" ng-model="eventInfo.DeptIDSelected" class="form-control" style="min-width: 100%;" ng-options="dept.deptname for dept in dsCombo.dept track by dept.deptname"></select>
+                </div>*@
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Type of Event<span class="red">*</span></label>
+                <select name="eventType" ng-model="eventInfo.EventTypeSelected" class="form-control" style="min-width: 100%;" ng-options="eve.Descrip for eve in dsCombo.EventType track by eve.codeword" required ng-class="{true: 'error'}[submitted() && userform.eventType.$invalid]"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Year</label>
+                <select name="nature" disabled ng-model="eventInfo.FinyearIDSelected" class="form-control" style="min-width: 100%;" ng-options="sat.Descrip for sat in dsCombo.FinYear track by sat.finyearid"></select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Purpose</label>
+                <div class="control-wrapper">
+                    <div class="control-section">
+                        @Html.EJS().RichTextEditor("defaultRTE").Value("").Created("created").Render()
+                        <div id="dateError"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Description</label>
+                <div class="control-wrapper">
+                    <div class="control-section">
+                        @Html.EJS().RichTextEditor("defaultRTEFN").Value("").Created("createdfn").Render()
+                    </div>
+                </div>
+                @Html.EJS().ScriptManager()
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Upload Brochure</label>
+                <div id="spnMsg" ng-show="isShowMsg" style="margin-bottom:15px; margin-top:15px;"></div>
+                <table id="tbl" style="width:100%">
+                    <tr>
+                        <td style="width:100%">
+                            <input type="file" id="attach_brochure" name="fileToUpload" class="form-control" autocomplete="off" style="max-width: 100%;" accept=".jpeg,.jpg,.png,.pdf,.doc">
+                        </td>
+                        <td>
+                            <button type="button" id="btnUploadBrochure" class="btn btn-default btnf" ng-click="Upload('brochure')">Upload</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-12" ng-show="BrochureFile.length > 0">
+                <table id="tblContents" class="table table-sm" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>File Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="broch in BrochureFile">
+                            <td>{{$index+1}}.</td>
+                            <td>{{broch.Url}}</td>
+                            <td>
+                                <a href="javascript:void(0)"><i class="fa fa-download" ng-click="downloadBrochure(broch.Url)"></i></a>
+                                <a href="javascript:void(0)"><i class="fa fa-trash" ng-click="deleteBrochure($index)"></i></a>
+                            </td>
+                        </tr>
+                        <tr ng-show="!BrochureFile.length">
+                            <td colspan="3" style="text-align:center;font-size: 20px;">No Records Found...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Add Image/Video</label>
+                <div id="spnMsg" ng-show="isShowMsg" style="margin-bottom:15px; margin-top:15px;"></div>
+                <table id="tbl" style="width:100%">
+                    <tr>
+                        <td style="width:100%">
+                            <input type="file" id="attach_filename" name="fileToUpload" multiple="multiple" class="form-control"
+                                   autocomplete="off" style="max-width: 100%;" accept=".jpeg,.gif,.png,.jpg,.mp4,.3gp,.ogg,.mpeg"
+                                   onchange="angular.element(this).scope().getFileDetails(this)">
+                        </td>
+                        <td><button type="button" id="btnAttachmentUpload" class="btn btn-default btnf" ng-click="Upload('media')">Upload</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row" style="margin-left:2px;">
+            <ul class="nav nav-tabs" id="myTab" role="tablist" style="width:100%">
+                <li class="nav-item">
+                    <a class="nav-link active" id="content-tab" data-toggle="tab" href="#content" role="tab" aria-controls="content" aria-selected="true">Media</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent" style="width:99%;">
+                <div class="tab-pane fade show active" id="content" role="tabpanel" aria-labelledby="content-tab">
+                    <div class="clearfix" style="margin-top:20px;"></div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <table id="tblContents" class="table table-sm" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Media Type</th>
+                                        <th>File Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="med in UploadFiles">
+                                        <td>{{$index+1}}.</td>
+                                        <td>{{med.UploadType}}</td>
+                                        <td>{{med.bloborgname || med.Url}}</td>
+                                        <td>
+                                            <a href="javascript:void(0)"><i class="fa fa-download" ng-click="downloadMedia(med.Url)"></i></a>
+                                            <a href="javascript:void(0)"><i class="fa fa-trash" ng-click="deleteMedia($index)"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="!UploadFiles.length">
+                                        <td colspan="5" style="text-align:center;font-size: 20px;">No Records Found...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Page Content-->
+        <hr />
+        @Html.Partial("_SavePanel")
+
+        <!-- Modal -->
+        <div class="modal fade" id="errorModel" role="dialog" style="z-index:99999">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Error</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p style="font-size: 16px;">Please check your uploaded file extension. </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnClose" class="btn btn-default" ng-click="closeErrorDialog()">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+@section botscripts{
+    <script type="text/javascript">
+        $(function () {
+            $(".admnDate").datetimepicker({
+                format: 'Y/m/d',
+                timepicker: false,
+            }).attr('readonly', 'readonly');
+
+            $('#dateclean').on('click', function () {
+                $('#startdate').val('');
+            });
+        });
+
+        rsApp.controller('FormController', function ($scope, $http, usSpinnerService) {
+            $scope.model = JSON.parse($("#model_json").val());
+            $scope.status = 'loaded';
+
+            var loadmodel = function (result) {
+                $scope.model = result;
+                //Set Page Heading
+                $scope.title = ($scope.model.frmMode == 2 ? "Add" : $scope.model.frmMode == 1 ? "Edit" : "");
+                //Show Hide Delete Buttons
+                $scope.visdel = ($scope.model.frmMode == 2 ? false : true);
+                //set Event Model in scopee
+                $scope.eventInfo = $scope.model.dsForm.DT[0];
+                //Date Format
+                $scope.eventInfo.Sdate = $scope.eventInfo.Sdate == undefined ? "" : new moment($scope.eventInfo.Sdate).format("YYYY-MM-D");
+                //Bind Description HTML Message
+                defaultRTEFN.value = $scope.eventInfo.DescriptionHTML == undefined ? "" : $scope.eventInfo.DescriptionHTML;
+                defaultRTE.value = $scope.eventInfo.PurposeHTML == undefined ? "" : $scope.eventInfo.PurposeHTML;
+                ////Drop Downs
+                $scope.dsCombo = $scope.model.dsCombo;
+                $scope.ValueLists = $scope.model.ValueLists;
+
+                ////Bind Dropdown in edit mode
+                @Html.RenderLookup("eventInfo", Model, Model.dsForm.Tables[0]);
+                //Assign Upload Files
+                $scope.UploadFiles = $scope.model.GridViews.Media.MainGrid.myDS.dt != undefined ? $scope.model.GridViews.Media.MainGrid.myDS.dt : [];
+                if (Array.isArray($scope.UploadFiles) && $scope.UploadFiles.length > 0) {
+                    for (var i = 0; i < $scope.UploadFiles.length; i++) {
+                        $scope.UploadFiles[i].blobname = $scope.UploadFiles[i].Url;
+                    }
+                }
+
+                //Brochure
+                if ($scope.eventInfo.Brochure != undefined && $scope.eventInfo.Brochure != null) {
+                    $scope.BrochureFile = JSON.parse($scope.eventInfo.Brochure);
+                } else {
+                    $scope.BrochureFile = [];
+                }
+
+            }
+
+            loadmodel($scope.model);
+
+            $scope.downloadMedia = function (filename) {
+                $scope.download('frmEvent', filename);
+            }
+
+            $scope.deleteMedia = function (index) {
+                $scope.UploadFiles.splice(index, 1);
+            }
+
+            $scope.downloadBrochure = function (filename) {
+                $scope.download('frmEvent', filename);
+            }
+
+            $scope.deleteBrochure = function (index) {
+                $scope.BrochureFile.splice(index, 1);
+            }
+
+            // GET THE FILE INFORMATION.
+            $scope.getFileDetails = function (e) {
+                $scope.files = [];
+                $scope.$apply(function () {
+                    // STORE THE FILE OBJECT IN AN ARRAY.
+                    for (var i = 0; i < e.files.length; i++) {
+                        $scope.files.push(e.files[i])
+                    }
+                });
+            };
+
+            $scope.Upload = function (type) {
+                var fileExtn = '';
+                var ctrlName = '';
+                var hdnControl = '';
+                var statusType = '';
+
+                $("div.spinnerTarget").addClass("backdrop");
+                $("body").css("overflow", "hidden");
+                usSpinnerService.spin('spinner-1');
+
+                if (type == "brochure") {
+                    fileExtn = $('#attach_brochure').val().split('.').pop().toLowerCase();
+                    // For Progress baar
+                    ctrlName = $('#attach_brochure');
+                    filec = $('#attach_brochure').val();
+                    hdnControl = 'attach_brochure';
+                    statusType = 'brochureStatus';
+
+                    if (fileExtn.toLowerCase() !== "jpeg" && fileExtn.toLowerCase() !== "jpg" && fileExtn.toLowerCase() !== "png" && fileExtn.toLowerCase() !== "pdf" && fileExtn.toLowerCase() !== "doc" && fileExtn.toLowerCase() !== "docx") {
+                        $('#errorModel').modal('toggle');
+                        $scope.isbtnAttachmentUpload = "";
+                        return false;
+                    }
+
+                    var url = '/frmEvent/ParamsOutput' + location.search;
+                    var payload = { filename: filec };
+                    payload = JSON.stringify(payload);
+                    var payloaddata = { key: 'sas', Params: payload, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() };
+
+                    $scope.UploadFile(url, payloaddata, true, ctrlName, hdnControl, statusType);
+                }
+                if (type == "media") {
+                    var fileExtn = '';
+                    var fileEx = [];
+                    //FILL FormData WITH FILE DETAILS.
+                    for (var i in $scope.files) {
+                        fileExtn = $scope.files[i].name.split('.').pop();
+                        if (fileExtn.toLowerCase() !== "jpeg" && fileExtn.toLowerCase() !== "jpg" && fileExtn.toLowerCase() !== "png" && fileExtn.toLowerCase() !== "gif" && fileExtn.toLowerCase() !== "mp4" && fileExtn.toLowerCase() !== "3gp" && fileExtn.toLowerCase() !== "ogg" && fileExtn.toLowerCase() !== "mpeg" && fileExtn.toLowerCase() !== "pdf" && fileExtn.toLowerCase() !== "doc" && fileExtn.toLowerCase() !== "docx") {
+                            fileEx.push(fileExtn);
+                        }
+                    }
+
+                    if (Array.isArray(fileEx) && fileEx.length > 0) {
+                        $('#errorModel').modal('toggle');
+                        $scope.isbtnAttachmentUpload = "";
+                        return false;
+                    }
+
+                    if ($scope.files.length > 0) {
+                        $scope.orgName = $scope.files[0].name;
+                        $scope.UploadType = $scope.files[0].type;
+
+                        $scope.frmName = '/frmEvent/';
+                        var url = $scope.frmName + 'ParamsOutput' + location.search;
+                        var payloaddata = { key: 'sas', Params: JSON.stringify({ filename: $scope.files[0].name }), __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() };
+                        $scope.UploadMultipleFiles($scope.files, url, payloaddata);
+                    }
+                }
+            }
+
+            $scope.calculatemodel = function () {
+                $scope.Media = [];
+                if (Array.isArray($scope.UploadFiles) && $scope.UploadFiles.length) {
+                    for (var i = 0; i < $scope.UploadFiles.length; i++) {
+                        $scope.Media.push({ UploadType: $scope.UploadFiles[i].UploadType, Url: $scope.UploadFiles[i].blobname });
+                    }
+                }
+                $scope.model.GridViews.Media.MainGrid.myDS.dt = $scope.Media;
+
+                if (Array.isArray($scope.BrochureFile) && $scope.BrochureFile.length) {
+                    $scope.model.dsForm.DT[0].Brochure = JSON.stringify($scope.BrochureFile);
+                } else {
+                    $scope.model.dsForm.DT[0].Brochure = null;
+                }
+
+                $scope.model.dsForm.DT[0].DescriptionHTML = base64EncodeUnicode(defaultRTEFN.getHtml());
+                $scope.model.dsForm.DT[0].DescriptionText = base64EncodeUnicode(defaultRTEFN.getText());
+
+                $scope.model.dsForm.DT[0].PurposeHTML = base64EncodeUnicode(defaultRTE.getHtml());
+                $scope.model.dsForm.DT[0].PurposeText = base64EncodeUnicode(defaultRTE.getText());
+            }
+
+            $scope.cleanupmodel = function (datamodel) { }
+
+            //Delete Records
+            $scope.GenerateDelPayload = function () {
+                //Pass the EntityKey in lowercase
+                var payload = { EntityKey: 'event', ID: $scope.model.dsForm.DT[0].EventID, AcceptWarning: false };
+                return payload;
+            };
+
+            @Html.RenderFile("~/scripts/uploadFiles.js");
+            @Html.RenderFile("~/scripts/rsforms.js");
+        });
+    </script>
+}

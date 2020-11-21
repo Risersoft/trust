@@ -1,0 +1,136 @@
+﻿@using risersoft.shared.web.Extensions
+@using Newtonsoft.Json
+@using risersoft.app.mxform.trust
+
+@model frmLandDetailModel
+@{
+    ViewData["Title"] = "";
+    Layout = "~/Views/Shared/_FrameworkLayout.vbhtml";
+    var modelJson = JsonConvert.SerializeObject(Model, Formatting.Indented,
+                            new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml, NullValueHandling = NullValueHandling.Ignore });
+}
+
+<link href="~/Content/custom-calander.css" rel="stylesheet" />
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/jQueryUI-datetimepicker.js"></script>
+
+<div Class="container cbackground">
+    <form action="" method="post" name="userform" id="userform" ng-controller="FormController">
+        <input type="hidden" id="model_json" value='@Html.Raw(modelJson)' />
+        <input type="hidden" id="fileStatus" />
+
+        @Html.AntiForgeryToken()
+
+        <!-- Start Page Heading Section -->
+        <div class="row">
+            <div class="col-md-10">
+                <label class="control-label"></label>
+                <h5 style="color:#1c66a7">{{title}} Land Details</h5>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <hr />
+
+        <!-- End Page Heading Section -->
+        <!-- Start Page Content -->
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Trust</label>
+                <select class="form-control" name="company" ng-model="landInfo.CompanyIDSelected" disabled ng-options="c.CompName for c in comapny track by c.Companyid" style="min-width: 100%;"></select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Khasra Num<span class="red">*</span></label>
+                <input type="text" name="khasranumber" ng-model="landInfo.KhasraNum" class="form-control" style="min-width: 100%;" required ng-class="{true: 'error'}[submitted() && userform.khasranumber.$invalid]" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Area</label>
+                <input type="text" name="current" ng-model="landInfo.Area" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Sale Deed Date</label>
+                <div class="input-group">
+                    <input type="text" id="saledeeddate" name="saledeeddate" ng-model="landInfo.SaleDeedDate" class="form-control admnDate" style="max-width:100%" aria-describedby="basic-addon1" />
+                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 225px; z-index:9">
+                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                    <label class="input-group-addon btn" for="close" style="position: absolute;margin-left: 205px;z-index:9;" id="dateclean">
+                        <span class="fa fa-close" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Purchased From</label>
+                <input type="text" name="current" ng-model="landInfo.PurchasedFrom" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Sale Deed Detail</label>
+                <input type="text" name="amtpaid" ng-model="landInfo.SaleDeedDetail" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Favour Of</label>
+                <input type="text" name="mnthRent" ng-model="landInfo.FavourOf" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="inputEmail4">Remark</label>
+                <input type="text" name="remarks" ng-model="landInfo.Remark" class="form-control" style="min-width: 100%;" />
+            </div>
+        </div>
+        <!-- End Page Content-->
+        <hr />
+        @Html.Partial("_SavePanel")
+    </form>
+</div>
+
+@section botscripts{
+    <script type="text/javascript">
+        rsApp.controller('FormController', function ($scope, $http, usSpinnerService) {
+            $(function () {
+                $(".admnDate").datetimepicker({
+                    format: 'Y/m/d',
+                    timepicker: false,
+                }).attr('readonly', 'readonly');
+
+                $('#dateclean').on('click', function () {
+                    $('#saledeeddate').val('');
+                });
+            });
+
+            $scope.model = JSON.parse($("#model_json").val());
+            $scope.status = 'loaded';
+
+            var loadmodel = function (result) {
+                $scope.model = result;
+                //Set Page Heading
+                $scope.title = ($scope.model.frmMode == 2 ? "Add" : $scope.model.frmMode == 1 ? "Edit" : "");
+                //Show Hide Delete Buttons
+                $scope.visdel = ($scope.model.frmMode == 2 ? false : true);
+                //Land Detail Info
+                $scope.landInfo = $scope.model.dsForm.DT[0];
+                //Date Format
+                $scope.landInfo.Dated = new moment($scope.landInfo.Dated).format("YYYY-MM-D");
+                //Bind DropDowns
+                $scope.comapny = $scope.model.dsCombo.Company;
+                //Set Dropdown values
+                $scope.landInfo.CompanyIDSelected = $.grep($scope.comapny, function (item, index) { return item.Companyid == $scope.model.dsForm.DT[0].CompanyID })[0];
+            }
+
+            loadmodel($scope.model);
+
+            $scope.calculatemodel = function () {
+            }
+
+            $scope.cleanupmodel = function (datamodel) { }
+
+            //Delete Records
+            $scope.GenerateDelPayload = function () {
+                //Pass the EntityKey in lowercase
+                var payload = { EntityKey: 'landdetail', ID: $scope.model.dsForm.DT[0].LandDetailID, AcceptWarning: false };
+                return payload;
+            };
+
+            @Html.RenderFile("~/scripts/rsforms.js");
+        });
+    </script>
+}

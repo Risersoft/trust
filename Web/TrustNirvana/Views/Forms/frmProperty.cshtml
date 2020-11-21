@@ -1,0 +1,210 @@
+﻿@using risersoft.shared.web.Extensions;
+@using Newtonsoft.Json;
+@using risersoft.app.mxform.trust;
+
+@model frmPropertyModel
+@{
+    ViewData["Title"] = "";
+    Layout = "~/Views/Shared/_FrameworkLayout.vbhtml";
+    var modelJson = JsonConvert.SerializeObject(Model, Formatting.Indented,
+                            new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml, NullValueHandling = NullValueHandling.Ignore });
+}
+
+<link href="~/Content/custom-calander.css" rel="stylesheet" />
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Scripts/jQueryUI-datetimepicker.js"></script>
+
+<div Class="container cbackground">
+    <form action="" method="post" name="userform" id="userform" ng-controller="FormController">
+        <input type="hidden" id="model_json" value='@Html.Raw(modelJson)' />
+        <input type="hidden" id="fileStatus" />
+
+        @Html.AntiForgeryToken()
+
+        <!-- Start Page Heading Section -->
+        <div class="row">
+            <div class="col-md-10">
+                <label class="control-label"></label>
+                <h5 style="color:#1c66a7">{{title}} Property</h5>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <!-- End Page Heading Section -->
+
+        <hr />
+        <!-- Start Page Content -->
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Trust</label>
+                <select class="form-control" name="company" ng-model="propertyInfo.CompanyIDSelected" disabled ng-options="c.CompName for c in dsCombo.Company track by c.Companyid" style="min-width: 100%;"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Used For</label>
+                <input type="text" name="usedfor" ng-model="propertyInfo.UsedFor" class="form-control" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Occupy Date</label>
+                <div class="input-group">
+                    <input type="text" id="occupydate" name="occupydate" ng-model="propertyInfo.OccupyDate" class="form-control admnDate" style="max-width:100%" aria-describedby="basic-addon1" />
+                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 310px; z-index:9">
+                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                    <label class="input-group-addon btn" for="close" style="position: absolute;margin-left: 285px;z-index:9;" id="dateclean">
+                        <span class="fa fa-close" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Shop Number<span class="red">*</span></label>
+                <input type="text" name="shopno" ng-model="propertyInfo.ShopNo" class="form-control numeric" style="min-width: 100%;" required ng-class="{true: 'error'}[submitted() && userform.shopno.$invalid]" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Floor</label>
+                <input type="text" name="floor" ng-model="propertyInfo.Floor" class="form-control numeric" style="min-width: 100%;" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputEmail4">Leave Date</label>
+                <div class="input-group">
+                    <input type="text" id="leavedate" name="leavedate" ng-model="propertyInfo.LeaveDate" class="form-control admnDate" style="max-width:100%" aria-describedby="basic-addon1" />
+                    <label class="input-group-addon btn" for="date" style="position: absolute; margin-left: 310px; z-index:9">
+                        <span class="fa fa-calendar open-datetimepicker" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                    <label class="input-group-addon btn" for="close" style="position: absolute;margin-left: 285px;z-index:9;" id="dateclean1">
+                        <span class="fa fa-close" id="basic-addon1" style="cursor:pointer"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="inputEmail4">Remark</label>
+                <input type="text" name="remark" ng-model="propertyInfo.Remark" class="form-control" style="min-width: 100%;" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12" style="background-color:#1c66a7">
+                <label for="inputEmail4" style="font-size: 20px;color: #fff;margin-top: 10px;">Upload Shop Photo</label>
+            </div>
+        </div>
+        <div class="form-row" style="margin-top: 5px;">
+            <div class="form-group col-md-2">
+                <img ng-src="{{imageUrl}}" id="imgInp" alt="sample Image" style="width: 130px;">
+            </div>
+            <div class="form-group col-md-9">
+                <label for="staticEmail" class="col-form-label" style="margin-left: 25px;">File</label>
+                <input type="file" id="attach_filename" name="attach_filename" class="form-control" accept=".jpg, .jpeg, .png" autocomplete="off" style="max-width: 88%;margin-top: -35px;margin-left: 80px;">
+            </div>
+            <div class="col-md-1">
+                <button type="button" id="btnAlumniPic" class="btn btn-default btnf" ng-click="UploadStudentPic()" style="margin-top:3px;">Upload</button>
+            </div>
+        </div>
+        <!-- End Page Content-->
+        <hr />
+        @Html.Partial("_SavePanel")
+    </form>
+</div>
+
+@section botscripts{
+    <script type="text/javascript">
+        rsApp.controller('FormController', function ($scope, $http, usSpinnerService) {
+            $(function () {
+                $(".admnDate").datetimepicker({
+                    format: 'Y/m/d',
+                    timepicker: false,
+                }).attr('readonly', 'readonly');
+
+                $('#dateclean').on('click', function () {
+                    $('#occupydate').val('');
+                });
+
+                $('#dateclean1').on('click', function () {
+                    $('#leavedate').val('');
+                });
+            });
+
+            $scope.model = JSON.parse($("#model_json").val());
+            $scope.status = 'loaded';
+
+            var loadmodel = function (result) {
+                $scope.model = result;
+                //Set Page Heading
+                $scope.title = ($scope.model.frmMode == 2 ? "Add" : $scope.model.frmMode == 1 ? "Edit" : "");
+                //Show Hide Delete Buttons
+                $scope.visdel = ($scope.model.frmMode == 2 ? false : true);
+                //PropertyInfo
+                $scope.propertyInfo = $scope.model.dsForm.DT[0];
+                //Bind DropDown and Selected
+                $scope.dsCombo = $scope.model.dsCombo;
+                @Html.RenderLookup("propertyInfo", Model, Model.dsForm.Tables[0]);
+                //Date Format
+                $scope.propertyInfo.OccupyDate = $scope.propertyInfo.OccupyDate == undefined ? "" : new moment($scope.propertyInfo.OccupyDate).format("YYYY-MM-D");
+                $scope.propertyInfo.LeaveDate = $scope.propertyInfo.LeaveDate == undefined ? "" : new moment($scope.propertyInfo.LeaveDate).format("YYYY-MM-D");
+
+                //Bind Initial Image
+                if ($scope.propertyInfo.ShopPhoto != undefined) {
+                    $scope.url = '/frmProperty/ParamsOutput' + location.search;
+                    $scope.payload = { serverPath: $scope.propertyInfo.ShopPhoto, PropertyID: $scope.propertyInfo.PropertyID };
+                    payload = JSON.stringify($scope.payload);
+                    var payloaddata = { key: 'download', Params: payload, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() };
+
+                    $.post($scope.url, payloaddata, function (result) {
+                        toDataURL(result.Data, function (dataUrl) {
+                            $('#imgInp').attr('src', dataUrl);
+                        });
+                    });
+                }
+                else {
+                $scope.imageUrl = "/Content/Images/images.jpg";
+                }
+
+                $scope.UploadFiles = [];
+            }
+
+            loadmodel($scope.model);
+
+            $scope.UploadStudentPic = function () {
+                var fileExtn = $('#attach_filename').val().split('.').pop().toLowerCase();
+                if (fileExtn !== "jpeg" && fileExtn !== "jpg" && fileExtn !== "png") {
+                    $('#errorModel').modal('toggle');
+                    return false;
+                }
+
+                $scope.UploadUserFiles('frmProperty');
+            }
+
+            $scope.calculatemodel = function () {
+                console.log($scope.UploadFiles);
+                if (Array.isArray($scope.UploadFiles) && $scope.UploadFiles.length > 0)
+                    $scope.model.dsForm.DT[0].ShopPhoto = $scope.UploadFiles[0].blobname;
+            }
+
+            $scope.cleanupmodel = function (datamodel) { }
+
+            $("#attach_filename").change(function () {
+                readURL(this);
+            });
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imgInp').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]); // convert to base64 string
+                }
+            }
+
+            //Delete Records
+            $scope.GenerateDelPayload = function () {
+                var payload = { EntityKey: 'property', ID: $scope.model.dsForm.DT[0].PropertyID, AcceptWarning: false };
+                return payload;
+            };
+
+            @Html.RenderFile("~/scripts/uploadFiles.js");
+            @Html.RenderFile("~/scripts/rsforms.js");
+        });
+    </script>
+}
