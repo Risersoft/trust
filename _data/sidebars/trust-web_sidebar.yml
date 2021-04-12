@@ -74,7 +74,7 @@ entries:
       url: /trust-nirvana-web/shop.html
       output: web, pdf
       
-    - title: Rent
+    - title: Rent Details
       url: /trust-nirvana-web/rent.html
       output: web, pdf
       

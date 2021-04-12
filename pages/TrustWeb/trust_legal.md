@@ -48,7 +48,7 @@ To see the listing of Court case hearings, click on **Property Menu -> Legal -> 
 
 ![](/images/listofcourthearings.png)
 
-You can edit court case hearing details by **Right click on Court Case Hearing -> Edit Court**.
+You can edit court case hearing details by **Right click on Court Case Hearing -> Edit Court Hearing**.
 
 ![](/images/editcourthearing.png)
 
